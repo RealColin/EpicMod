@@ -1,6 +1,7 @@
 package github.realcolin.epicmod;
 
 import com.mojang.logging.LogUtils;
+import github.realcolin.epicmod.item.EpicItems;
 import net.minecraft.client.player.Input;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -33,6 +34,8 @@ public class EpicMod
     public EpicMod()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        EpicItems.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
