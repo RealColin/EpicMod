@@ -2,7 +2,11 @@ package github.realcolin.epicmod;
 
 import com.mojang.logging.LogUtils;
 import github.realcolin.epicmod.item.EpicItems;
+import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
 import net.minecraft.client.player.Input;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
@@ -48,7 +52,7 @@ public class EpicMod
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-
+        event.enqueueWork(EpicBiomeSource::registerBiomeSource);
     }
 
     private void serverEvent(final TickEvent.PlayerTickEvent event)
