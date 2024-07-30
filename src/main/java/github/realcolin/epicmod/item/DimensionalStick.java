@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 public class DimensionalStick extends Item {
 
@@ -19,14 +20,16 @@ public class DimensionalStick extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level pLevel, Player pPlayer, @NotNull InteractionHand pUsedHand) {
         if (pPlayer.level() instanceof ServerLevel level) {
             ResourceKey<Level> resKey = EpicDimensions.EPICDIM_KEY;
 
             BlockPos pos = new BlockPos((int)pPlayer.position().x, (int)pPlayer.position().y, (int)pPlayer.position().z);
 
             ServerLevel dim = level.getServer().getLevel(resKey);
-            pPlayer.changeDimension(dim, new EpicTeleporter(pos));
+            if (dim != null) {
+                pPlayer.changeDimension(dim, new EpicTeleporter(pos));
+            }
         }
 
         return super.use(pLevel, pPlayer, pUsedHand);

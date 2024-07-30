@@ -10,7 +10,6 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 
-import java.util.Set;
 import java.util.stream.Stream;
 
 public class EpicBiomeSource extends BiomeSource {
