@@ -5,8 +5,11 @@
     "settings": "minecraft:overworld",
     "biome_source": {
       "type": "epicmod:epic_source",
-      "main": "epicmod:weird",
-      "second": "minecraft:plains"
+      "default": "epicmod:weird",
+      "biomes": [
+        "minecraft:plains",
+        "minecraft:jungle"
+      ]
     }
   }
 }

@@ -8,6 +8,6 @@ import net.minecraft.world.level.biome.Biome;
 
 public class EpicBiomes {
     public static final ResourceKey<Biome> WEIRD_BIOME = ResourceKey.create(Registries.BIOME,
-            new ResourceLocation(EpicMod.MOD_ID, "weird_biome"));
+            new ResourceLocation(EpicMod.MOD_ID, "weird"));
 
 }

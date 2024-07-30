@@ -30,6 +30,9 @@ public class DimensionalStick extends Item {
             if (dim != null) {
                 pPlayer.changeDimension(dim, new EpicTeleporter(pos));
             }
+            else {
+                System.out.println("Destination server is null.");
+            }
         }
 
         return super.use(pLevel, pPlayer, pUsedHand);
