@@ -1,42 +1,44 @@
 package github.realcolin.epicmod.worldgen.biome;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.EpicMod;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.Climate;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 public class EpicBiomeSource extends BiomeSource {
 
+    private static final MapCodec<Integer> FORTNITE =
+            RecordCodecBuilder.mapCodec(yes -> yes.group(
+                    Codec.intRange(0, Integer.MAX_VALUE).fieldOf("color").forGetter(a -> a)
+            ).apply(yes, Integer::valueOf));
+
+    private static final Codec<List<Pair<Holder<Biome>, Integer>>> BIOME_COLOR_CODEC =
+            RecordCodecBuilder.<Pair<Holder<Biome>, Integer>>create(yes -> yes.group(
+                    Biome.CODEC.fieldOf("biome").forGetter(Pair::getFirst),
+                    FORTNITE.forGetter(Pair::getSecond)
+            ).apply(yes, Pair::of)).listOf();
+
     public static final MapCodec<EpicBiomeSource> CODEC =
             RecordCodecBuilder.mapCodec(yea -> yea.group(
-                Biome.CODEC.fieldOf("default").forGetter(src -> src._default),
-                Biome.LIST_CODEC.fieldOf("biomes").forGetter(src -> src.biomes)
+                    Biome.CODEC.fieldOf("default").forGetter(src -> src._default),
+                    BIOME_COLOR_CODEC.fieldOf("biomes").forGetter(src -> src.biomes)
             ).apply(yea, EpicBiomeSource::new));
 
-//    public static final MapCodec<EpicBiomeSource> CODEC =
-//            RecordCodecBuilder.mapCodec(yea -> yea.group(
-//                    RegistryOps.retrieveElement(EpicBiomes.WEIRD_BIOME),
-//                    RegistryOps.retrieveElement(Biomes.PLAINS)
-//            ).apply(yea, yea.stable(EpicBiomeSource::new)));
-
-    //private final Holder<Biome> main;
-    //private final Holder<Biome> second;
-
     private final Holder<Biome> _default;
-    private final HolderSet<Biome> biomes;
+    private final List<Pair<Holder<Biome>, Integer>> biomes;
 
-    public EpicBiomeSource(Holder<Biome> _default, HolderSet<Biome> biomes) {
+    public EpicBiomeSource(Holder<Biome> _default, List<Pair<Holder<Biome>, Integer>> biomes) {
         this._default = _default;
         this.biomes = biomes;
     }
@@ -48,17 +50,11 @@ public class EpicBiomeSource extends BiomeSource {
 
     @Override
     protected Stream<Holder<Biome>> collectPossibleBiomes() {
-        var biome_stream = biomes.stream();
-        return Stream.concat(biome_stream, Stream.of(_default));
+        return biomes.stream().map(Pair::getFirst);
     }
 
     @Override
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
-        if (x == 0 && z == 0)
-            return this.biomes.get(0);
-        else if (x == 4 && z == 0)
-            return this.biomes.get(1);
-
         return this._default;
     }
 

@@ -7,8 +7,14 @@
       "type": "epicmod:epic_source",
       "default": "epicmod:weird",
       "biomes": [
-        "minecraft:plains",
-        "minecraft:jungle"
+        {
+          "biome": "minecraft:plains",
+          "color": 16711680
+        },
+        {
+          "biome": "minecraft:jungle",
+          "color": 255
+        }
       ]
     }
   }
