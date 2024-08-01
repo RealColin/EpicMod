@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 public class EpicBiomeSource extends BiomeSource {
 
-    private static final MapCodec<Integer> FORTNITE =
+    private static final MapCodec<Integer> COLOR =
             RecordCodecBuilder.mapCodec(yes -> yes.group(
                     Codec.intRange(0, Integer.MAX_VALUE).fieldOf("color").forGetter(a -> a)
             ).apply(yes, Integer::valueOf));
@@ -26,7 +26,7 @@ public class EpicBiomeSource extends BiomeSource {
     private static final Codec<List<Pair<Holder<Biome>, Integer>>> BIOME_COLOR_CODEC =
             RecordCodecBuilder.<Pair<Holder<Biome>, Integer>>create(yes -> yes.group(
                     Biome.CODEC.fieldOf("biome").forGetter(Pair::getFirst),
-                    FORTNITE.forGetter(Pair::getSecond)
+                    COLOR.forGetter(Pair::getSecond)
             ).apply(yes, Pair::of)).listOf();
 
     public static final MapCodec<EpicBiomeSource> CODEC =
@@ -55,6 +55,9 @@ public class EpicBiomeSource extends BiomeSource {
 
     @Override
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
+        if (x == 0 && z == 0)
+            return this.biomes.getFirst().getFirst();
+        
         return this._default;
     }
 
