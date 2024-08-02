@@ -2,6 +2,7 @@ package github.realcolin.epicmod;
 
 import github.realcolin.epicmod.item.EpicItems;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
+import github.realcolin.epicmod.worldgen.chunk.EpicChunkGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -37,7 +38,12 @@ public class EpicMod
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-        event.enqueueWork(EpicBiomeSource::registerBiomeSource);
+        //event.enqueueWork(EpicBiomeSource::registerBiomeSource);
+
+        event.enqueueWork(() -> {
+           EpicBiomeSource.registerBiomeSource();
+           EpicChunkGenerator.registerChunkGenerator();
+        });
     }
 
     private void serverEvent(final TickEvent.PlayerTickEvent event)

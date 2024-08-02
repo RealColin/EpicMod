@@ -1,0 +1,20 @@
+{
+  "type": "epicmod:epicdim_type",
+  "generator": {
+    "type": "epicmod:epic_generator",
+    "biome_source": {
+      "type": "epicmod:epic_source",
+      "default": "epicmod:weird",
+      "biomes": [
+        {
+          "biome": "minecraft:plains",
+          "color": 16711680
+        },
+        {
+          "biome": "minecraft:jungle",
+          "color": 255
+        }
+      ]
+    }
+  }
+}

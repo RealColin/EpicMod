@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 public class EpicDimensions {
 
     public static final ResourceKey<Level> EPICDIM_KEY = ResourceKey.create(Registries.DIMENSION,
-            new ResourceLocation(EpicMod.MOD_ID, "epicdim"));
+            new ResourceLocation(EpicMod.MOD_ID, "betterdim"));
 
 //    public static final ResourceKey<DimensionType> EPICDIM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
 //            new ResourceLocation(EpicMod.MOD_ID, "epicdim_type"));
