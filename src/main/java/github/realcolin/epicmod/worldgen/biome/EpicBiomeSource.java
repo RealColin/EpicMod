@@ -37,10 +37,12 @@ public class EpicBiomeSource extends BiomeSource {
 
     private final Holder<Biome> _default;
     private final List<Pair<Holder<Biome>, Integer>> biomes;
+    private final BiomeImageLoader image;
 
     public EpicBiomeSource(Holder<Biome> _default, List<Pair<Holder<Biome>, Integer>> biomes) {
         this._default = _default;
         this.biomes = biomes;
+        this.image = new BiomeImageLoader(new ResourceLocation(EpicMod.MOD_ID, "map.png"));
     }
 
     @Override
@@ -55,10 +57,22 @@ public class EpicBiomeSource extends BiomeSource {
 
     @Override
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
-        if (x == 0 && z == 0)
-            return this.biomes.getFirst().getFirst();
-        
-        return this._default;
+        int color = image.getColorAtPixel(x, z);
+
+        if (color == -1) {
+            return this._default;
+        } else {
+            for (var pair : biomes) {
+                if (pair.getSecond() == color)
+                    return pair.getFirst();
+            }
+            return this._default;
+        }
+
+//        if (x == 0 && z == 0)
+//            return this.biomes.getFirst().getFirst();
+//
+//        return this._default;
     }
 
     public static void registerBiomeSource() {
