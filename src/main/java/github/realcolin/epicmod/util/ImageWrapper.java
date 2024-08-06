@@ -1,4 +1,4 @@
-package github.realcolin.epicmod.worldgen.biome;
+package github.realcolin.epicmod.util;
 
 import github.realcolin.epicmod.EpicMod;
 
@@ -8,12 +8,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 
-public class BiomeImageLoader {
+public class ImageWrapper {
     private final BufferedImage image;
 
-    public BiomeImageLoader() {
-        String PATH = "assets/%s/map/map.png".formatted(EpicMod.MOD_ID);
+    public ImageWrapper(String name) {
+        String PATH = "assets/%s/map/%s.png".formatted(EpicMod.MOD_ID, name);
         URL resource = getClass().getClassLoader().getResource(PATH);
+        System.out.println(resource);
         try {
             image = ImageIO.read(Objects.requireNonNull(resource));
         } catch (IOException e) {
@@ -28,9 +29,7 @@ public class BiomeImageLoader {
         if (x < 0 || x >= width || y < 0 || y >= height) {
             return -1;
         } else {
-            int pixelColor = image.getRGB(x, y) & 0x00FFFFFF;
-            System.out.println(pixelColor);
-            return pixelColor;
+            return image.getRGB(x, y) & 0x00FFFFFF;
         }
     }
 }

@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.EpicMod;
+import github.realcolin.epicmod.util.ImageWrapper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -38,12 +39,12 @@ public class EpicBiomeSource extends BiomeSource {
 
     private final Holder<Biome> _default;
     private final List<Pair<Holder<Biome>, Integer>> biomes;
-    private final BiomeImageLoader image;
+    private final ImageWrapper image;
 
     public EpicBiomeSource(Holder<Biome> _default, List<Pair<Holder<Biome>, Integer>> biomes) {
         this._default = _default;
         this.biomes = biomes;
-        this.image = new BiomeImageLoader();
+        this.image = new ImageWrapper("biomes");
     }
 
     @Override

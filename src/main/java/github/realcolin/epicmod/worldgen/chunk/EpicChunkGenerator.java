@@ -3,6 +3,7 @@ package github.realcolin.epicmod.worldgen.chunk;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.EpicMod;
+import github.realcolin.epicmod.util.ImageWrapper;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
@@ -37,6 +38,7 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
     private final EpicBiomeSource source;
     private final List<BlockState> states;
+    private final ImageWrapper image;
 
     public EpicChunkGenerator(EpicBiomeSource pBiomeSource) {
         super(pBiomeSource);
@@ -49,6 +51,8 @@ public class EpicChunkGenerator extends ChunkGenerator {
             states.add(Blocks.STONE.defaultBlockState());
         }
         states.add(Blocks.GRASS_BLOCK.defaultBlockState());
+
+        this.image = new ImageWrapper("chunks");
     }
 
     @Override
