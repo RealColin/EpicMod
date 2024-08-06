@@ -13,8 +13,6 @@ import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.BiomeManager;
-import net.minecraft.world.level.biome.BiomeSource;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -23,7 +21,6 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -39,7 +36,7 @@ public class EpicChunkGenerator extends ChunkGenerator {
             ).apply(yes, yes.stable(EpicChunkGenerator::new)));
 
     private final EpicBiomeSource source;
-    private List<BlockState> states;
+    private final List<BlockState> states;
 
     public EpicChunkGenerator(EpicBiomeSource pBiomeSource) {
         super(pBiomeSource);
@@ -60,22 +57,22 @@ public class EpicChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    protected MapCodec<? extends ChunkGenerator> codec() {
+    protected @NotNull MapCodec<? extends ChunkGenerator> codec() {
         return CODEC;
     }
 
     @Override
-    public void applyCarvers(WorldGenRegion pLevel, long pSeed, RandomState pRandom, BiomeManager pBiomeManager, StructureManager pStructureManager, ChunkAccess pChunk, GenerationStep.Carving pStep) {
+    public void applyCarvers(@NotNull WorldGenRegion pLevel, long pSeed, @NotNull RandomState pRandom, @NotNull BiomeManager pBiomeManager, @NotNull StructureManager pStructureManager, @NotNull ChunkAccess pChunk, GenerationStep.@NotNull Carving pStep) {
 
     }
 
     @Override
-    public void buildSurface(WorldGenRegion pLevel, StructureManager pStructureManager, RandomState pRandom, ChunkAccess pChunk) {
+    public void buildSurface(@NotNull WorldGenRegion pLevel, @NotNull StructureManager pStructureManager, @NotNull RandomState pRandom, @NotNull ChunkAccess pChunk) {
 
     }
 
     @Override
-    public void spawnOriginalMobs(WorldGenRegion pLevel) {
+    public void spawnOriginalMobs(@NotNull WorldGenRegion pLevel) {
 
     }
 
@@ -85,7 +82,7 @@ public class EpicChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<ChunkAccess> fillFromNoise(Executor pExecutor, Blender pBlender, RandomState pRandom, StructureManager pStructureManager, ChunkAccess pChunk) {
+    public @NotNull CompletableFuture<ChunkAccess> fillFromNoise(@NotNull Executor pExecutor, @NotNull Blender pBlender, @NotNull RandomState pRandom, @NotNull StructureManager pStructureManager, ChunkAccess pChunk) {
         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
         Heightmap heightmap = pChunk.getOrCreateHeightmapUnprimed(Heightmap.Types.OCEAN_FLOOR_WG);
         Heightmap heightmap1 = pChunk.getOrCreateHeightmapUnprimed(Heightmap.Types.WORLD_SURFACE_WG);
@@ -119,7 +116,7 @@ public class EpicChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public int getBaseHeight(int pX, int pZ, Heightmap.Types pType, LevelHeightAccessor pLevel, RandomState pRandom) {
+    public int getBaseHeight(int pX, int pZ, Heightmap.@NotNull Types pType, LevelHeightAccessor pLevel, @NotNull RandomState pRandom) {
 
         for (int i = Math.min(states.size(), pLevel.getMaxBuildHeight()) - 1; i >= 0; i--) {
             BlockState state = states.get(i);
@@ -133,20 +130,20 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
 
     @Override
-    public NoiseColumn getBaseColumn(int pX, int pZ, LevelHeightAccessor pHeight, RandomState pRandom) {
+    public @NotNull NoiseColumn getBaseColumn(int pX, int pZ, LevelHeightAccessor pHeight, @NotNull RandomState pRandom) {
         //BlockState[] blocks = new BlockState[]{Blocks.STONE.defaultBlockState(), Blocks.GRASS_BLOCK.defaultBlockState()};
 
         return new NoiseColumn(
                 pHeight.getMinBuildHeight(),
                 states
                         .stream()
-                        .limit((long)pHeight.getHeight())
+                        .limit(pHeight.getHeight())
                         .map(yea -> yea == null ? Blocks.AIR.defaultBlockState() : yea)
                         .toArray(BlockState[]::new));
     }
 
     @Override
-    public void addDebugScreenInfo(List<String> pInfo, RandomState pRandom, BlockPos pPos) {
+    public void addDebugScreenInfo(@NotNull List<String> pInfo, @NotNull RandomState pRandom, @NotNull BlockPos pPos) {
 
     }
 

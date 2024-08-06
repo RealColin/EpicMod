@@ -14,7 +14,7 @@ public class EpicItems {
     public static final RegistryObject<Item> DIMENSIONAL_STICK = ITEMS.register("dimensional_stick",
             () -> new DimensionalStick(new Item.Properties()));
 
- ;   public static void register(IEventBus bus) {
+    public static void register(IEventBus bus) {
         ITEMS.register(bus);
     }
 }

@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -42,37 +43,30 @@ public class EpicBiomeSource extends BiomeSource {
     public EpicBiomeSource(Holder<Biome> _default, List<Pair<Holder<Biome>, Integer>> biomes) {
         this._default = _default;
         this.biomes = biomes;
-        this.image = new BiomeImageLoader(new ResourceLocation(EpicMod.MOD_ID, "map.png"));
+        this.image = new BiomeImageLoader();
     }
 
     @Override
-    protected MapCodec<EpicBiomeSource> codec() {
+    protected @NotNull MapCodec<EpicBiomeSource> codec() {
         return CODEC;
     }
 
     @Override
-    protected Stream<Holder<Biome>> collectPossibleBiomes() {
+    protected @NotNull Stream<Holder<Biome>> collectPossibleBiomes() {
         return biomes.stream().map(Pair::getFirst);
     }
 
     @Override
-    public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
+    public @NotNull Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.@NotNull Sampler sampler) {
         int color = image.getColorAtPixel(x, z);
 
-        if (color == -1) {
-            return this._default;
-        } else {
+        if (color != -1) {
             for (var pair : biomes) {
                 if (pair.getSecond() == color)
                     return pair.getFirst();
             }
-            return this._default;
         }
-
-//        if (x == 0 && z == 0)
-//            return this.biomes.getFirst().getFirst();
-//
-//        return this._default;
+        return this._default;
     }
 
     public static void registerBiomeSource() {

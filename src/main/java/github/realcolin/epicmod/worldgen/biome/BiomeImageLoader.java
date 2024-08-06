@@ -1,11 +1,9 @@
 package github.realcolin.epicmod.worldgen.biome;
 
 import github.realcolin.epicmod.EpicMod;
-import net.minecraft.resources.ResourceLocation;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -13,27 +11,14 @@ import java.util.Objects;
 public class BiomeImageLoader {
     private final BufferedImage image;
 
-    private final String PATH = "assets/%s/map/map.png".formatted(EpicMod.MOD_ID);
-
-    public BiomeImageLoader(ResourceLocation res) {
+    public BiomeImageLoader() {
+        String PATH = "assets/%s/map/map.png".formatted(EpicMod.MOD_ID);
         URL resource = getClass().getClassLoader().getResource(PATH);
         try {
             image = ImageIO.read(Objects.requireNonNull(resource));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-//        String path = res.getNamespace() + "/" + res.getPath();
-//        System.out.println(path);
-//
-//        File file = new File(path);
-//        try {
-//            this.image = ImageIO.read(file);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-
-
     }
 
     public int getColorAtPixel(int x, int y) {
