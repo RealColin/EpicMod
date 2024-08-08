@@ -59,7 +59,7 @@ public class EpicBiomeSource extends BiomeSource {
 
     @Override
     public @NotNull Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.@NotNull Sampler sampler) {
-        int color = image.getColorAtPixel(x, z);
+        int color = image.getColorAtPixel(x / 4, z / 4);
 
         if (color != -1) {
             for (var pair : biomes) {
