@@ -16,6 +16,7 @@ import net.minecraft.world.level.biome.Climate;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
 public class EpicBiomeSource extends BiomeSource {
@@ -39,12 +40,13 @@ public class EpicBiomeSource extends BiomeSource {
 
     private final Holder<Biome> _default;
     private final List<Pair<Holder<Biome>, Integer>> biomes;
-    private final ImageWrapper image;
+    private final ImageWrapper biomeMap;
+    private final Random random = new Random();
 
     public EpicBiomeSource(Holder<Biome> _default, List<Pair<Holder<Biome>, Integer>> biomes) {
         this._default = _default;
         this.biomes = biomes;
-        this.image = new ImageWrapper("biomes");
+        this.biomeMap = new ImageWrapper("biomes");
     }
 
     @Override
@@ -57,9 +59,56 @@ public class EpicBiomeSource extends BiomeSource {
         return biomes.stream().map(Pair::getFirst);
     }
 
+
+    // works decent enough for now, i wanna look at how other mods do this in order to see how they fix the
+    // problem of having jarring biome edges, especially at higher scales
     @Override
     public @NotNull Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.@NotNull Sampler sampler) {
-        int color = image.getColorAtPixel(x / 4, z / 4);
+        /*
+         * By how much we divide the input coordinates before using them as pixel coordinates
+         * The input coordinates are a 4x4 section of blocks, so a scale of 4 would be a 16x16 section of blocks,
+         * a scale of 8 would be a 32x32 section of blocks, and so on
+         */
+        int scale = 8;
+
+        /*
+         * First, get jitter values
+         */
+
+        // TODO implement this WITHOUT random
+        int jx = random.nextInt(0, scale + 1) - (scale / 2);
+        int jz = random.nextInt(0, scale + 1) - (scale / 2);
+
+        /*
+         * Next, get the color at the pixel position offset by the jitter
+         */
+        int px = (x + jx) / scale, pz = (z + jz) / scale;
+        int jitteredColor = biomeMap.getColorAtPixel(px, pz);
+
+        /*
+         * Then, make sure at least one neighbor of the current pixel has a matching color to jitteredColor
+         * if it does, then jitteredColor will be used to pick the biome at this position
+         * if it does not, then the correct pixel color will be used to pick the biome at this position
+         */
+        px = x / scale;
+        pz = z / scale;
+        int color;
+
+        if (biomeMap.getColorAtPixel(px, pz) == jitteredColor) {
+            color = jitteredColor;
+        } else {
+            if (biomeMap.getColorAtPixel(px + 1, pz) == jitteredColor) {
+                color = jitteredColor;
+            } else if (biomeMap.getColorAtPixel(px - 1, pz) == jitteredColor) {
+                color = jitteredColor;
+            } else if (biomeMap.getColorAtPixel(px, pz + 1) == jitteredColor) {
+                color = jitteredColor;
+            } else if (biomeMap.getColorAtPixel(px, pz - 1) == jitteredColor) {
+                color = jitteredColor;
+            } else {
+                color = biomeMap.getColorAtPixel(px, pz);
+            }
+        }
 
         if (color != -1) {
             for (var pair : biomes) {
