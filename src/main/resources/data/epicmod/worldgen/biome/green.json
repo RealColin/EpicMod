@@ -7,8 +7,8 @@
     "fog_color": 9433252,
     "water_color": 3064446,
     "water_fog_color": 2531945,
-    "grass_color": 16711680,
-    "foliage_color": 16711680
+    "grass_color": 65280,
+    "foliage_color": 65280
   },
   "spawners": {},
   "spawn_costs": {},

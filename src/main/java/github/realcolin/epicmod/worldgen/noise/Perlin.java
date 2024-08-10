@@ -1,25 +1,72 @@
 package github.realcolin.epicmod.worldgen.noise;
 
+import java.util.Random;
+
 public class Perlin {
-    private final int seed;
+
+    private final int[] permutation;
 
     public Perlin(int seed) {
-        this.seed = seed;
+        permutation = new int[512];
+        Random random = new Random(seed);
+
+        int[] p = new int[256];
+        for (int i = 0; i < 256; i++) {
+            p[i] = i;
+        }
+
+        for (int i = 255; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+            int swap = p[i];
+            p[i] = p[j];
+            p[j] = swap;
+        }
+
+        for (int i = 0; i < 256; i++) {
+            permutation[i] = permutation[i + 256] = p[i];
+        }
     }
 
-    public float sample(float x, float y) {
-        int x0 = NoiseUtil.floor(x);
-        int y0 = NoiseUtil.floor(y);
-        int x1 = x0 + 1;
-        int y1 = y0 + 1;
-        float xs = NoiseUtil.interpolate(x - x0);
-        float ys = NoiseUtil.interpolate(y - y0);
-        float xd0 = x - x0;
-        float yd0 = y - y0;
-        float xd1 = xd0 - 1.0F;
-        float yd1 = yd0 - 1.0F;
-        float xf0 = NoiseUtil.interpolate(NoiseUtil.grad(seed, x0, y0, xd0, yd0), NoiseUtil.grad(seed, x1, y0, xd1, yd0), xs);
-        float xf1 = NoiseUtil.interpolate(NoiseUtil.grad(seed, x0, y1, xd0, yd1), NoiseUtil.grad(seed, x1, y1, xd1, yd1), xs);
-        return NoiseUtil.interpolate(xf0, xf1, ys);
+    private double noise(double x, double y) {
+        int xi = (int) Math.floor(x) & 255;
+        int yi = (int) Math.floor(y) & 255;
+
+        double xf = x - Math.floor(x);
+        double yf = y - Math.floor(y);
+
+        double u = fade(xf);
+        double v = fade(yf);
+
+        int aa, ab, ba, bb;
+        aa = permutation[permutation[xi] + yi];
+        ab = permutation[permutation[xi] + yi + 1];
+        ba = permutation[permutation[xi + 1] + yi];
+        bb = permutation[permutation[xi + 1] + yi + 1];
+
+        double x1, x2;
+        x1 = lerp(grad(aa, xf, yf), grad(ba, xf - 1, yf), u);
+        x2 = lerp(grad(ab, xf, yf - 1), grad(bb, xf - 1, yf - 1), u);
+
+        return lerp(x1, x2, v);
+    }
+
+    private double fade(double t) {
+        return t * t * t * (t * (t * 6 - 15) + 10);
+    }
+
+    private double lerp(double a, double b, double t) {
+        return a + t * (b - a);
+    }
+
+    private double grad(int hash, double x, double y) {
+        int h = hash & 15;
+        double u = h < 8 ? x : y;
+        double v = h < 4 ? y : h == 12 || h == 14 ? x : 0;
+        return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
+    }
+
+    public double sample(double x, double y) {
+
+        return noise(x, y);
     }
 }

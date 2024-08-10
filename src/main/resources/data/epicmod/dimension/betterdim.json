@@ -7,11 +7,15 @@
       "default": "epicmod:weird",
       "biomes": [
         {
-          "biome": "minecraft:plains",
+          "biome": "epicmod:amazing",
           "color": 16711680
         },
         {
-          "biome": "epicmod:amazing",
+          "biome": "epicmod:green",
+          "color": 65280
+        },
+        {
+          "biome": "epicmod:rivr",
           "color": 255
         }
       ]

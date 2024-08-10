@@ -6,6 +6,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.EpicMod;
 import github.realcolin.epicmod.util.ImageWrapper;
+import github.realcolin.epicmod.worldgen.noise.Perlin;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -42,6 +43,7 @@ public class EpicBiomeSource extends BiomeSource {
     private final List<Pair<Holder<Biome>, Integer>> biomes;
     private final ImageWrapper biomeMap;
     private final Random random = new Random();
+    private final Perlin perlin = new Perlin(1);
 
     public EpicBiomeSource(Holder<Biome> _default, List<Pair<Holder<Biome>, Integer>> biomes) {
         this._default = _default;
@@ -69,46 +71,55 @@ public class EpicBiomeSource extends BiomeSource {
          * The input coordinates are a 4x4 section of blocks, so a scale of 4 would be a 16x16 section of blocks,
          * a scale of 8 would be a 32x32 section of blocks, and so on
          */
+//        int scale = 4;
+//
+//        /*
+//         * First, get jitter values
+//         */
+//
+//        // TODO implement this WITHOUT random
+//        int jx = random.nextInt(0, scale + 1) - (scale / 2);
+//        int jz = random.nextInt(0, scale + 1) - (scale / 2);
+//
+//        /*
+//         * Next, get the color at the pixel position offset by the jitter
+//         */
+//        int px = (x + jx) / scale, pz = (z + jz) / scale;
+//        int jitteredColor = biomeMap.getColorAtPixel(px, pz);
+//
+//        /*
+//         * Then, make sure at least one neighbor of the current pixel has a matching color to jitteredColor
+//         * if it does, then jitteredColor will be used to pick the biome at this position
+//         * if it does not, then the correct pixel color will be used to pick the biome at this position
+//         */
+//        px = x / scale;
+//        pz = z / scale;
+//        int color;
+//
+//        if (biomeMap.getColorAtPixel(px, pz) == jitteredColor) {
+//            color = jitteredColor;
+//        } else {
+//            if (biomeMap.getColorAtPixel(px + 1, pz) == jitteredColor) {
+//                color = jitteredColor;
+//            } else if (biomeMap.getColorAtPixel(px - 1, pz) == jitteredColor) {
+//                color = jitteredColor;
+//            } else if (biomeMap.getColorAtPixel(px, pz + 1) == jitteredColor) {
+//                color = jitteredColor;
+//            } else if (biomeMap.getColorAtPixel(px, pz - 1) == jitteredColor) {
+//                color = jitteredColor;
+//            } else {
+//                color = biomeMap.getColorAtPixel(px, pz);
+//            }
+//        }
+
         int scale = 8;
 
-        /*
-         * First, get jitter values
-         */
+        double jitter = perlin.sample((x + 0.5) / (scale * 2), (z + 0.5) / (scale * 2));
+        int rounded = (int)Math.round(jitter * scale);
+        //System.out.println(rounded);
 
-        // TODO implement this WITHOUT random
-        int jx = random.nextInt(0, scale + 1) - (scale / 2);
-        int jz = random.nextInt(0, scale + 1) - (scale / 2);
-
-        /*
-         * Next, get the color at the pixel position offset by the jitter
-         */
-        int px = (x + jx) / scale, pz = (z + jz) / scale;
-        int jitteredColor = biomeMap.getColorAtPixel(px, pz);
-
-        /*
-         * Then, make sure at least one neighbor of the current pixel has a matching color to jitteredColor
-         * if it does, then jitteredColor will be used to pick the biome at this position
-         * if it does not, then the correct pixel color will be used to pick the biome at this position
-         */
-        px = x / scale;
-        pz = z / scale;
-        int color;
-
-        if (biomeMap.getColorAtPixel(px, pz) == jitteredColor) {
-            color = jitteredColor;
-        } else {
-            if (biomeMap.getColorAtPixel(px + 1, pz) == jitteredColor) {
-                color = jitteredColor;
-            } else if (biomeMap.getColorAtPixel(px - 1, pz) == jitteredColor) {
-                color = jitteredColor;
-            } else if (biomeMap.getColorAtPixel(px, pz + 1) == jitteredColor) {
-                color = jitteredColor;
-            } else if (biomeMap.getColorAtPixel(px, pz - 1) == jitteredColor) {
-                color = jitteredColor;
-            } else {
-                color = biomeMap.getColorAtPixel(px, pz);
-            }
-        }
+        int color = biomeMap.getColorAtPixel((x + rounded) / scale, (z + rounded) / scale);
+        //int color = biomeMap.getColorAtPixel(x / 4, z / 4);
 
         if (color != -1) {
             for (var pair : biomes) {
