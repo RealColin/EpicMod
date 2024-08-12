@@ -17,7 +17,6 @@ import net.minecraft.world.level.biome.Climate;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Stream;
 
 public class EpicBiomeSource extends BiomeSource {
@@ -42,7 +41,6 @@ public class EpicBiomeSource extends BiomeSource {
     private final Holder<Biome> _default;
     private final List<Pair<Holder<Biome>, Integer>> biomes;
     private final ImageWrapper biomeMap;
-    private final Random random = new Random();
     private final Perlin perlin = new Perlin(1);
 
     public EpicBiomeSource(Holder<Biome> _default, List<Pair<Holder<Biome>, Integer>> biomes) {
@@ -62,15 +60,12 @@ public class EpicBiomeSource extends BiomeSource {
     }
 
 
-    // works decent enough for now, i wanna look at how other mods do this in order to see how they fix the
-    // problem of having jarring biome edges, especially at higher scales
+
     @Override
     public @NotNull Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.@NotNull Sampler sampler) {
         int scale = 4;
-
         double jitter = perlin.sample((x + 0.5) / 2, (z + 0.5) / 2);
         int rounded = (int)Math.round(jitter * scale);
-        //System.out.println(rounded);
 
         int color = biomeMap.getColorAtPixel((x + rounded) / scale, (z + rounded) / scale);
 
