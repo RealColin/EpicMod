@@ -1,5 +1,6 @@
 package github.realcolin.epicmod.worldgen.chunk;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.EpicMod;
@@ -37,6 +38,7 @@ public class EpicChunkGenerator extends ChunkGenerator {
             ).apply(yes, yes.stable(EpicChunkGenerator::new)));
 
     private final EpicBiomeSource source;
+    private List<Pair<TerrainType, Integer>> terrainTypes;
     private final List<BlockState> states;
     private final ImageWrapper image;
 
@@ -72,7 +74,19 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
     @Override
     public void buildSurface(@NotNull WorldGenRegion pLevel, @NotNull StructureManager pStructureManager, @NotNull RandomState pRandom, @NotNull ChunkAccess pChunk) {
+        int minHeight = pChunk.getMinBuildHeight();
 
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                int posX = pChunk.getPos().x * 16 + x;
+                int posZ = pChunk.getPos().z * 16 + z;
+
+                // type of terrain at the position based on the color
+                TerrainType type;
+
+
+            }
+        }
     }
 
     @Override
