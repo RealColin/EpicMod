@@ -84,6 +84,9 @@ public class EpicChunkGenerator extends ChunkGenerator {
                 // type of terrain at the position based on the color
                 TerrainType type;
 
+                // get height somehow from the terrain type, (x, z) coordinate, and 
+                int height;
+
 
             }
         }
