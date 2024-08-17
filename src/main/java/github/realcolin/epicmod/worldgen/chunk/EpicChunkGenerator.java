@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.EpicMod;
 import github.realcolin.epicmod.util.ImageWrapper;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
+import github.realcolin.epicmod.worldgen.noise.Perlin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,6 +33,7 @@ import java.util.concurrent.Executor;
 
 public class EpicChunkGenerator extends ChunkGenerator {
 
+    // TODO add terrain types to CODEC
     public static final MapCodec<EpicChunkGenerator> CODEC =
             RecordCodecBuilder.mapCodec(yes -> yes.group(
                     EpicBiomeSource.CODEC.fieldOf("biome_source").forGetter(EpicChunkGenerator::getBiomeSource)
@@ -39,13 +41,16 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
     private final EpicBiomeSource source;
     private List<Pair<TerrainType, Integer>> terrainTypes;
-    private final List<BlockState> states;
+    private TerrainType _default;
+    private final List<BlockState> states; // TODO get rid of this line
     private final ImageWrapper image;
+    private Perlin noise = null;
 
     public EpicChunkGenerator(EpicBiomeSource pBiomeSource) {
         super(pBiomeSource);
         this.source = pBiomeSource;
 
+        // TODO get rid of this crap
         this.states = new ArrayList<>();
 
         states.add(Blocks.BEDROCK.defaultBlockState());
@@ -74,6 +79,9 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
     @Override
     public void buildSurface(@NotNull WorldGenRegion pLevel, @NotNull StructureManager pStructureManager, @NotNull RandomState pRandom, @NotNull ChunkAccess pChunk) {
+        if (noise == null)
+            noise = new Perlin(pLevel.getSeed());
+
         int minHeight = pChunk.getMinBuildHeight();
 
         for (int x = 0; x < 16; x++) {
@@ -82,7 +90,7 @@ public class EpicChunkGenerator extends ChunkGenerator {
                 int posZ = pChunk.getPos().z * 16 + z;
 
                 // type of terrain at the position based on the color
-                TerrainType type;
+                TerrainType type = getType(pChunk);
 
                 // get height somehow from the terrain type, (x, z) coordinate, and 
                 int height;
@@ -90,6 +98,18 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
             }
         }
+    }
+
+    private TerrainType getType(ChunkAccess chunk) {
+        int color = image.getColorAtPixel(chunk.getPos().x, chunk.getPos().z);
+
+        if (color != -1) {
+            for (var pair : terrainTypes) {
+                if (pair.getSecond() == color)
+                    return pair.getFirst();
+            }
+        }
+        return this._default;
     }
 
     @Override
@@ -102,6 +122,7 @@ public class EpicChunkGenerator extends ChunkGenerator {
         return 384;
     }
 
+    // TODO empty all of this
     @Override
     public @NotNull CompletableFuture<ChunkAccess> fillFromNoise(@NotNull Executor pExecutor, @NotNull Blender pBlender, @NotNull RandomState pRandom, @NotNull StructureManager pStructureManager, ChunkAccess pChunk) {
         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
@@ -136,6 +157,7 @@ public class EpicChunkGenerator extends ChunkGenerator {
         return 0;
     }
 
+    // TODO empty this
     @Override
     public int getBaseHeight(int pX, int pZ, Heightmap.@NotNull Types pType, LevelHeightAccessor pLevel, @NotNull RandomState pRandom) {
 
@@ -150,6 +172,7 @@ public class EpicChunkGenerator extends ChunkGenerator {
     }
 
 
+    // TODO empty this
     @Override
     public @NotNull NoiseColumn getBaseColumn(int pX, int pZ, LevelHeightAccessor pHeight, @NotNull RandomState pRandom) {
         //BlockState[] blocks = new BlockState[]{Blocks.STONE.defaultBlockState(), Blocks.GRASS_BLOCK.defaultBlockState()};

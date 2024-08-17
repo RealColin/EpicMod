@@ -6,7 +6,7 @@ public class Perlin {
 
     private final int[] permutation;
 
-    public Perlin(int seed) {
+    public Perlin(long seed) {
         permutation = new int[512];
         Random random = new Random(seed);
 
