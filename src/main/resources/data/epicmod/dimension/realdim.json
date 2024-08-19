@@ -6,7 +6,7 @@
     "default_biome": "epicmod:weird",
     "map": {
       "image": "epicmod:map.png",
-      "samples": [
+      "entries": [
         {
           "color": 16711680,
           "biome": "epicmod:amazing",
