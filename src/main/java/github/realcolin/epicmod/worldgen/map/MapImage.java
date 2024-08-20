@@ -1,11 +1,7 @@
 package github.realcolin.epicmod.worldgen.map;
 
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import github.realcolin.epicmod.EpicMod;
-import github.realcolin.epicmod.util.ImageWrapper;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
 import github.realcolin.epicmod.worldgen.noise.Perlin;
 import net.minecraft.core.Holder;
@@ -16,7 +12,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -69,9 +64,6 @@ public class MapImage {
         return entries;
     }
 
-    public Holder<Biome> defaultBiome() {
-        return this.defaultBiome;
-    }
 
     public Holder<Biome> getBiome(int x, int z) {
         int scale = 4; // TODO make this not hardcoded

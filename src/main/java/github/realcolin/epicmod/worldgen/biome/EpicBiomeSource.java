@@ -1,14 +1,10 @@
 package github.realcolin.epicmod.worldgen.biome;
 
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.EpicMod;
-import github.realcolin.epicmod.util.ImageWrapper;
 import github.realcolin.epicmod.worldgen.map.MapEntry;
 import github.realcolin.epicmod.worldgen.map.MapImage;
-import github.realcolin.epicmod.worldgen.noise.Perlin;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,7 +14,6 @@ import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 public class EpicBiomeSource extends BiomeSource {
@@ -27,7 +22,7 @@ public class EpicBiomeSource extends BiomeSource {
                     MapImage.CODEC.fieldOf("map").forGetter(src -> src.map)
             ).apply(yes, yes.stable(EpicBiomeSource::new)));
 
-    private MapImage map;
+    private final MapImage map;
 
     public EpicBiomeSource(MapImage map) {
         this.map = map;

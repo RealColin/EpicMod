@@ -1,17 +1,12 @@
 package github.realcolin.epicmod.worldgen.chunk;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.EpicMod;
-import github.realcolin.epicmod.util.ImageWrapper;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
-import github.realcolin.epicmod.worldgen.biome.EpicBiomes;
-import github.realcolin.epicmod.worldgen.map.MapEntry;
 import github.realcolin.epicmod.worldgen.map.MapImage;
-import github.realcolin.epicmod.worldgen.noise.Perlin;
+
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +14,6 @@ import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.StructureManager;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,7 +39,6 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
     private final MapImage map;
 
-    private Perlin noise = null;
     private final List<BlockState> states; // TODO get rid of this
 
     public EpicChunkGenerator(MapImage map) {
@@ -99,18 +92,6 @@ public class EpicChunkGenerator extends ChunkGenerator {
 //            }
 //        }
     }
-
-//    private TerrainType getType(ChunkAccess chunk) {
-//        int color = image.getColorAtPixel(chunk.getPos().x, chunk.getPos().z);
-//
-//        if (color != -1) {
-//            for (var pair : terrainTypes) {
-//                if (pair.getSecond() == color)
-//                    return pair.getFirst();
-//            }
-//        }
-//        return this._default;
-//    }
 
     @Override
     public void spawnOriginalMobs(@NotNull WorldGenRegion pLevel) {
