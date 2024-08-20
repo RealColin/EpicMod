@@ -6,8 +6,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.EpicMod;
 import github.realcolin.epicmod.util.ImageWrapper;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
+import github.realcolin.epicmod.worldgen.biome.EpicBiomes;
+import github.realcolin.epicmod.worldgen.map.MapEntry;
+import github.realcolin.epicmod.worldgen.map.MapImage;
 import github.realcolin.epicmod.worldgen.noise.Perlin;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +19,7 @@ import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,26 +38,21 @@ import java.util.concurrent.Executor;
 
 public class EpicChunkGenerator extends ChunkGenerator {
 
-
-
-    // TODO add terrain types to CODEC
     public static final MapCodec<EpicChunkGenerator> CODEC =
-            RecordCodecBuilder.mapCodec(yes -> yes.group(
-                    EpicBiomeSource.CODEC.fieldOf("biome_source").forGetter(EpicChunkGenerator::getBiomeSource)
-            ).apply(yes, yes.stable(EpicChunkGenerator::new)));
+            RecordCodecBuilder.mapCodec(map -> map.group(
+                    MapImage.CODEC.fieldOf("map").forGetter(src -> src.map)
+            ).apply(map, map.stable(EpicChunkGenerator::new)));
 
-    private final EpicBiomeSource source;
-    private List<Pair<TerrainType, Integer>> terrainTypes;
-    private TerrainType _default;
-    private final List<BlockState> states; // TODO get rid of this line
-    private final ImageWrapper image;
+    private final MapImage map;
+
     private Perlin noise = null;
+    private final List<BlockState> states; // TODO get rid of this
 
-    public EpicChunkGenerator(EpicBiomeSource pBiomeSource) {
-        super(pBiomeSource);
-        this.source = pBiomeSource;
+    public EpicChunkGenerator(MapImage map) {
+        super(map.getSource());
+        this.map = map;
 
-        // TODO get rid of this crap
+        // TODO get rid of all below
         this.states = new ArrayList<>();
 
         states.add(Blocks.BEDROCK.defaultBlockState());
@@ -60,13 +60,11 @@ public class EpicChunkGenerator extends ChunkGenerator {
             states.add(Blocks.STONE.defaultBlockState());
         }
         states.add(Blocks.GRASS_BLOCK.defaultBlockState());
-
-        this.image = new ImageWrapper("chunks");
     }
 
     @Override
     public @NotNull EpicBiomeSource getBiomeSource() {
-        return source;
+        return map.getSource();
     }
 
     @Override
@@ -81,38 +79,38 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
     @Override
     public void buildSurface(@NotNull WorldGenRegion pLevel, @NotNull StructureManager pStructureManager, @NotNull RandomState pRandom, @NotNull ChunkAccess pChunk) {
-        if (noise == null)
-            noise = new Perlin(pLevel.getSeed());
-
-        int minHeight = pChunk.getMinBuildHeight();
-
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                int posX = pChunk.getPos().x * 16 + x;
-                int posZ = pChunk.getPos().z * 16 + z;
-
-                // type of terrain at the position based on the color
-                TerrainType type = getType(pChunk);
-
-                // get height somehow from the terrain type, (x, z) coordinate, and 
-                int height;
-
-
-            }
-        }
+//        if (noise == null)
+//            noise = new Perlin(pLevel.getSeed());
+//
+//        int minHeight = pChunk.getMinBuildHeight();
+//
+//        for (int x = 0; x < 16; x++) {
+//            for (int z = 0; z < 16; z++) {
+//                int posX = pChunk.getPos().x * 16 + x;
+//                int posZ = pChunk.getPos().z * 16 + z;
+//
+//                // type of terrain at the position based on the color
+//                TerrainType type;
+//
+//                // get height somehow from the terrain type, (x, z) coordinate, and
+//                int height;
+//
+//
+//            }
+//        }
     }
 
-    private TerrainType getType(ChunkAccess chunk) {
-        int color = image.getColorAtPixel(chunk.getPos().x, chunk.getPos().z);
-
-        if (color != -1) {
-            for (var pair : terrainTypes) {
-                if (pair.getSecond() == color)
-                    return pair.getFirst();
-            }
-        }
-        return this._default;
-    }
+//    private TerrainType getType(ChunkAccess chunk) {
+//        int color = image.getColorAtPixel(chunk.getPos().x, chunk.getPos().z);
+//
+//        if (color != -1) {
+//            for (var pair : terrainTypes) {
+//                if (pair.getSecond() == color)
+//                    return pair.getFirst();
+//            }
+//        }
+//        return this._default;
+//    }
 
     @Override
     public void spawnOriginalMobs(@NotNull WorldGenRegion pLevel) {
