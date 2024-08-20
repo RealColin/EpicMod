@@ -1,5 +1,6 @@
 package github.realcolin.epicmod.worldgen.map;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
@@ -20,23 +21,26 @@ public class MapImage {
             RecordCodecBuilder.mapCodec(map -> map.group(
                     ResourceLocation.CODEC.fieldOf("image").forGetter(src -> src.res),
                     Biome.CODEC.fieldOf("default_biome").forGetter(src -> src.defaultBiome),
+                    Codec.STRING.fieldOf("default_terrain").forGetter(src -> src.defaultTerrain),
                     MapEntry.ENTRY_CODEC.fieldOf("entries").forGetter(src -> src.entries)
             ).apply(map, MapImage::new));
 
     private final ResourceLocation res;
     private final Holder<Biome> defaultBiome;
+    private final String defaultTerrain;
     private final List<MapEntry> entries;
     private final BufferedImage image;
     private EpicBiomeSource source = null;
 
-    private final Perlin perlin = new Perlin(1);
+    private final Perlin biome_jitter = new Perlin(0);
 
     // TODO remove temp print statements
-    public MapImage(ResourceLocation res, Holder<Biome> defaultBiome, List<MapEntry> entries) {
+    public MapImage(ResourceLocation res, Holder<Biome> defaultBiome, String defaultTerrain, List<MapEntry> entries) {
         System.out.println("MapImage constructor called");
 
         this.res = res;
         this.defaultBiome = defaultBiome;
+        this.defaultTerrain = defaultTerrain;
         this.entries = entries;
 
         String PATH = "assets/%s/map/%s".formatted(res.getNamespace(), res.getPath());
@@ -64,10 +68,9 @@ public class MapImage {
         return entries;
     }
 
-
     public Holder<Biome> getBiome(int x, int z) {
         int scale = 4; // TODO make this not hardcoded
-        double jitter = perlin.sample((x + 0.5) / 2, (z + 0.5) / 2);
+        double jitter = biome_jitter.sample((x + 0.5) / 2, (z + 0.5) / 2);
         int rounded = (int)Math.round(jitter * scale);
 
         int color = this.getColorAtPixel((x + rounded) / scale, (z + rounded) / scale);

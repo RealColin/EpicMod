@@ -6,6 +6,7 @@ import github.realcolin.epicmod.EpicMod;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
 import github.realcolin.epicmod.worldgen.map.MapImage;
 
+import github.realcolin.epicmod.worldgen.noise.Perlin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -72,7 +73,9 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
     @Override
     public void buildSurface(@NotNull WorldGenRegion pLevel, @NotNull StructureManager pStructureManager, @NotNull RandomState pRandom, @NotNull ChunkAccess pChunk) {
-//        if (noise == null)
+
+
+        //        if (noise == null)
 //            noise = new Perlin(pLevel.getSeed());
 //
 //        int minHeight = pChunk.getMinBuildHeight();
