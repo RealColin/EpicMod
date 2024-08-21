@@ -1,9 +1,9 @@
 package github.realcolin.epicmod.worldgen.map;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
+import github.realcolin.epicmod.worldgen.chunk.Terrain;
 import github.realcolin.epicmod.worldgen.noise.Perlin;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -21,13 +21,13 @@ public class MapImage {
             RecordCodecBuilder.mapCodec(map -> map.group(
                     ResourceLocation.CODEC.fieldOf("image").forGetter(src -> src.res),
                     Biome.CODEC.fieldOf("default_biome").forGetter(src -> src.defaultBiome),
-                    Codec.STRING.fieldOf("default_terrain").forGetter(src -> src.defaultTerrain),
+                    Terrain.CODEC.fieldOf("default_terrain").forGetter(src -> src.defaultTerrain),
                     MapEntry.ENTRY_CODEC.fieldOf("entries").forGetter(src -> src.entries)
             ).apply(map, MapImage::new));
 
     private final ResourceLocation res;
     private final Holder<Biome> defaultBiome;
-    private final String defaultTerrain;
+    private final Holder<Terrain> defaultTerrain;
     private final List<MapEntry> entries;
     private final BufferedImage image;
     private EpicBiomeSource source = null;
@@ -35,17 +35,13 @@ public class MapImage {
     private final Perlin biome_jitter = new Perlin(0);
 
     // TODO remove temp print statements
-    public MapImage(ResourceLocation res, Holder<Biome> defaultBiome, String defaultTerrain, List<MapEntry> entries) {
-        System.out.println("MapImage constructor called");
-
+    public MapImage(ResourceLocation res, Holder<Biome> defaultBiome, Holder<Terrain> defaultTerrain, List<MapEntry> entries) {
         this.res = res;
         this.defaultBiome = defaultBiome;
         this.defaultTerrain = defaultTerrain;
         this.entries = entries;
 
         String PATH = "assets/%s/map/%s".formatted(res.getNamespace(), res.getPath());
-
-        System.out.println(PATH);
 
         URL resource = getClass().getClassLoader().getResource(PATH);
         try {
@@ -83,6 +79,7 @@ public class MapImage {
         }
         return this.defaultBiome;
     }
+
 
     private int getColorAtPixel(int x, int y) {
         int width = image.getWidth();

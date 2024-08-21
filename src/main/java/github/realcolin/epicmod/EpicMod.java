@@ -28,6 +28,7 @@ public class EpicMod
         EpicItems.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(EpicRegistries::init);
         MinecraftForge.EVENT_BUS.register(this);
 
         IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
@@ -38,8 +39,6 @@ public class EpicMod
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-        //event.enqueueWork(EpicBiomeSource::registerBiomeSource);
-
         event.enqueueWork(() -> {
            EpicBiomeSource.registerBiomeSource();
            EpicChunkGenerator.registerChunkGenerator();

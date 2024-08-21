@@ -6,7 +6,6 @@ import github.realcolin.epicmod.EpicMod;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
 import github.realcolin.epicmod.worldgen.map.MapImage;
 
-import github.realcolin.epicmod.worldgen.noise.Perlin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -74,26 +73,6 @@ public class EpicChunkGenerator extends ChunkGenerator {
     @Override
     public void buildSurface(@NotNull WorldGenRegion pLevel, @NotNull StructureManager pStructureManager, @NotNull RandomState pRandom, @NotNull ChunkAccess pChunk) {
 
-
-        //        if (noise == null)
-//            noise = new Perlin(pLevel.getSeed());
-//
-//        int minHeight = pChunk.getMinBuildHeight();
-//
-//        for (int x = 0; x < 16; x++) {
-//            for (int z = 0; z < 16; z++) {
-//                int posX = pChunk.getPos().x * 16 + x;
-//                int posZ = pChunk.getPos().z * 16 + z;
-//
-//                // type of terrain at the position based on the color
-//                TerrainType type;
-//
-//                // get height somehow from the terrain type, (x, z) coordinate, and
-//                int height;
-//
-//
-//            }
-//        }
     }
 
     @Override
@@ -120,6 +99,7 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
                 for (int k = 0; k < 16; k++) {
                     for (int l = 0; l < 16; l++) {
+
                         pChunk.setBlockState(blockpos$mutableblockpos.set(k, j, l), blockstate, false);
                         heightmap.update(k, j, l, blockstate);
                         heightmap1.update(k, j, l, blockstate);
