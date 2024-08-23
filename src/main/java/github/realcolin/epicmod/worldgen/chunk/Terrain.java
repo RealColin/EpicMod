@@ -12,7 +12,7 @@ public class Terrain {
 
     public static final Codec<Terrain> DIRECT_CODEC =
             RecordCodecBuilder.create(yes -> yes.group(
-                    Codec.INT.fieldOf("fortnite").forGetter(src -> src.h)
+                    Codec.INT.fieldOf("height").forGetter(src -> src.h)
             ).apply(yes, Terrain::new));
 
     public static final Codec<Holder<Terrain>> CODEC = RegistryFileCodec.create(EpicRegistries.TERRAIN, DIRECT_CODEC);

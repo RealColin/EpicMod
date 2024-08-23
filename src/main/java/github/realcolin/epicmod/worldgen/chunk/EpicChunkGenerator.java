@@ -72,6 +72,9 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
     @Override
     public void buildSurface(@NotNull WorldGenRegion pLevel, @NotNull StructureManager pStructureManager, @NotNull RandomState pRandom, @NotNull ChunkAccess pChunk) {
+        int chunkX = pChunk.getPos().x;
+        int chunkZ = pChunk.getPos().z;
+        
 
     }
 
