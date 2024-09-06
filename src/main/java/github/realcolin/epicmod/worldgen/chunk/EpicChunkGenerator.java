@@ -41,6 +41,9 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
     private final List<BlockState> states; // TODO get rid of this
 
+
+    // TODO eventually get rid of chunk generator, make map settings in datapack that generates worldgen datapacks, use regular chunkgenerator and
+    // use density functions to load the climate/biomes/terrain settings from the map
     public EpicChunkGenerator(MapImage map) {
         super(map.getSource());
         this.map = map;
