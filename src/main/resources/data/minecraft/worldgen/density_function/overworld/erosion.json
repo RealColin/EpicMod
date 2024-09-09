@@ -1,4 +1,5 @@
 {
   "type": "epicmod:image_sampler",
-  "map": 0.0
+  "map": "epicmod:epic",
+  "a": 0.0
 }

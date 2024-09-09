@@ -4,12 +4,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.worldgen.map.MapImage;
+import net.minecraft.core.Holder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public record ImageSampler(float a) implements DensityFunction.SimpleFunction {
+public record ImageSampler(Holder<MapImage> map, float a) implements DensityFunction.SimpleFunction {
     public static final MapCodec<ImageSampler> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Codec.FLOAT.fieldOf("map").forGetter(ImageSampler::a)
+            MapImage.CODEC.fieldOf("map").forGetter(ImageSampler::map),
+            Codec.FLOAT.fieldOf("a").forGetter(ImageSampler::a)
     ).apply(instance, ImageSampler::new));
 
     @Override
