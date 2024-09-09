@@ -7,6 +7,7 @@ import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
 import github.realcolin.epicmod.worldgen.map.MapImage;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -37,15 +38,15 @@ public class EpicChunkGenerator extends ChunkGenerator {
                     MapImage.CODEC.fieldOf("map").forGetter(src -> src.map)
             ).apply(map, map.stable(EpicChunkGenerator::new)));
 
-    private final MapImage map;
+    private final Holder<MapImage> map;
 
     private final List<BlockState> states; // TODO get rid of this
 
 
     // TODO eventually get rid of chunk generator, make map settings in datapack that generates worldgen datapacks, use regular chunkgenerator and
     // use density functions to load the climate/biomes/terrain settings from the map
-    public EpicChunkGenerator(MapImage map) {
-        super(map.getSource());
+    public EpicChunkGenerator(Holder<MapImage> map) {
+        super(map.get().getSource());
         this.map = map;
 
         // TODO get rid of all below
@@ -60,7 +61,7 @@ public class EpicChunkGenerator extends ChunkGenerator {
 
     @Override
     public @NotNull EpicBiomeSource getBiomeSource() {
-        return map.getSource();
+        return map.get().getSource();
     }
 
     @Override

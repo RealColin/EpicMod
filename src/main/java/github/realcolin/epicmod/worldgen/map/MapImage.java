@@ -3,10 +3,12 @@ package github.realcolin.epicmod.worldgen.map;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import github.realcolin.epicmod.EpicRegistries;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
 import github.realcolin.epicmod.worldgen.chunk.Terrain;
 import github.realcolin.epicmod.worldgen.noise.Perlin;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 
@@ -18,14 +20,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class MapImage {
-    public static final MapCodec<MapImage> CODEC =
-            RecordCodecBuilder.mapCodec(map -> map.group(
-                    ResourceLocation.CODEC.fieldOf("image").forGetter(src -> src.res),
-                    Biome.CODEC.fieldOf("default_biome").forGetter(src -> src.defaultBiome),
-                    Terrain.CODEC.fieldOf("default_terrain").forGetter(src -> src.defaultTerrain),
-                    MapEntry.ENTRY_CODEC.fieldOf("entries").forGetter(src -> src.entries)
-            ).apply(map, MapImage::new));
-
     public static final Codec<MapImage> DIRECT_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     ResourceLocation.CODEC.fieldOf("image").forGetter(src -> src.res),
@@ -33,6 +27,8 @@ public class MapImage {
                     Terrain.CODEC.fieldOf("default_terrain").forGetter(src -> src.defaultTerrain),
                     MapEntry.ENTRY_CODEC.fieldOf("entries").forGetter(src -> src.entries)
             ).apply(instance, MapImage::new));
+
+    public static final Codec<Holder<MapImage>> CODEC = RegistryFileCodec.create(EpicRegistries.MAP, DIRECT_CODEC);
 
 
     private final ResourceLocation res;
@@ -64,7 +60,7 @@ public class MapImage {
 
     public EpicBiomeSource getSource() {
         if (source == null) {
-            source = new EpicBiomeSource(this);
+            source = new EpicBiomeSource(Holder.direct(this));
         }
 
         return source;

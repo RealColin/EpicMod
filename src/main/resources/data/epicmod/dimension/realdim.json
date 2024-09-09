@@ -2,27 +2,6 @@
   "type": "epicmod:epicdim_type",
   "generator": {
     "type": "epicmod:epic_generator",
-    "map": {
-      "image": "epicmod:map.png",
-      "default_biome": "epicmod:weird",
-      "default_terrain": "epicmod:flat",
-      "entries": [
-        {
-          "color": 16711680,
-          "biome": "epicmod:amazing",
-          "terrain": "epicmod:steppe"
-        },
-        {
-          "color": 65280,
-          "biome": "epicmod:green",
-          "terrain": "epicmod:steppe"
-        },
-        {
-          "color": 255,
-          "biome": "epicmod:rivr",
-          "terrain": "epicmod:river"
-        }
-      ]
-    }
+    "map": "epicmod:epic"
   }
 }

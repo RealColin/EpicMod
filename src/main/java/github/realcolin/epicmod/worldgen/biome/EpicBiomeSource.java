@@ -22,9 +22,9 @@ public class EpicBiomeSource extends BiomeSource {
                     MapImage.CODEC.fieldOf("map").forGetter(src -> src.map)
             ).apply(yes, yes.stable(EpicBiomeSource::new)));
 
-    private final MapImage map;
+    private final Holder<MapImage> map;
 
-    public EpicBiomeSource(MapImage map) {
+    public EpicBiomeSource(Holder<MapImage> map) {
         this.map = map;
     }
 
@@ -35,12 +35,12 @@ public class EpicBiomeSource extends BiomeSource {
 
     @Override
     protected @NotNull Stream<Holder<Biome>> collectPossibleBiomes() {
-        return map.getEntries().stream().map(MapEntry::biome);
+        return map.get().getEntries().stream().map(MapEntry::biome);
     }
 
     @Override
     public @NotNull Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.@NotNull Sampler sampler) {
-        return map.getBiome(x, z);
+        return map.get().getBiome(x, z);
     }
 
     public static void registerBiomeSource() {
