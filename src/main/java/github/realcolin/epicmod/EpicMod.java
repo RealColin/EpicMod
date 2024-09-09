@@ -3,6 +3,7 @@ package github.realcolin.epicmod;
 import github.realcolin.epicmod.item.EpicItems;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
 import github.realcolin.epicmod.worldgen.chunk.EpicChunkGenerator;
+import github.realcolin.epicmod.worldgen.densityfunction.DensityFunctions;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -26,6 +27,7 @@ public class EpicMod
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         EpicItems.register(modEventBus);
+        DensityFunctions.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(EpicRegistries::init);

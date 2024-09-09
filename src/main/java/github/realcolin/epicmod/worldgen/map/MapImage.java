@@ -1,5 +1,6 @@
 package github.realcolin.epicmod.worldgen.map;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
@@ -24,6 +25,15 @@ public class MapImage {
                     Terrain.CODEC.fieldOf("default_terrain").forGetter(src -> src.defaultTerrain),
                     MapEntry.ENTRY_CODEC.fieldOf("entries").forGetter(src -> src.entries)
             ).apply(map, MapImage::new));
+
+    public static final Codec<MapImage> DIRECT_CODEC =
+            RecordCodecBuilder.create(instance -> instance.group(
+                    ResourceLocation.CODEC.fieldOf("image").forGetter(src -> src.res),
+                    Biome.CODEC.fieldOf("default_biome").forGetter(src -> src.defaultBiome),
+                    Terrain.CODEC.fieldOf("default_terrain").forGetter(src -> src.defaultTerrain),
+                    MapEntry.ENTRY_CODEC.fieldOf("entries").forGetter(src -> src.entries)
+            ).apply(instance, MapImage::new));
+
 
     private final ResourceLocation res;
     private final Holder<Biome> defaultBiome;

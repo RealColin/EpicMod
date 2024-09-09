@@ -1,29 +1,30 @@
 package github.realcolin.epicmod.worldgen.densityfunction;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.worldgen.map.MapImage;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public record ImageSampler(MapImage map) implements DensityFunction.SimpleFunction {
+public record ImageSampler(float a) implements DensityFunction.SimpleFunction {
     public static final MapCodec<ImageSampler> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            MapImage.CODEC.fieldOf("map").forGetter(ImageSampler::map)
+            Codec.FLOAT.fieldOf("map").forGetter(ImageSampler::a)
     ).apply(instance, ImageSampler::new));
 
     @Override
     public double compute(FunctionContext functionContext) {
-        return -0.30;
+        return a;
     }
 
     @Override
     public double minValue() {
-        return -0.45;
+        return -1.0;
     }
 
     @Override
     public double maxValue() {
-        return -0.15;
+        return 1.0;
     }
 
     @Override
