@@ -1,3 +1,5 @@
 {
-  "height": 0
+  "erosion": 0.1,
+  "continents": 1.0,
+  "ridges": 0.3
 }

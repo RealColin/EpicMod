@@ -12,18 +12,20 @@ public class Terrain {
 
     public static final Codec<Terrain> DIRECT_CODEC =
             RecordCodecBuilder.create(yes -> yes.group(
-                    Codec.INT.fieldOf("height").forGetter(src -> src.h)
-            ).apply(yes, Terrain::new));
+                    Codec.FLOAT.fieldOf("erosion").forGetter(src -> src.erosion),
+                    Codec.FLOAT.fieldOf("continents").forGetter(src -> src.continents),
+                    Codec.FLOAT.fieldOf("ridges").forGetter(src -> src.ridges)
+                    ).apply(yes, Terrain::new));
 
     public static final Codec<Holder<Terrain>> CODEC = RegistryFileCodec.create(EpicRegistries.TERRAIN, DIRECT_CODEC);
 
-    private final int h;
+    private final float erosion;
+    private final float continents;
+    private final float ridges;
 
-    public Terrain(int h) {
-        this.h = h;
-    }
-
-    public int getH() {
-        return this.h;
+    public Terrain(float erosion, float continents, float ridges) {
+        this.erosion = erosion;
+        this.continents = continents;
+        this.ridges = ridges;
     }
 }
