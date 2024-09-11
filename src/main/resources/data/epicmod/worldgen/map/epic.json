@@ -1,7 +1,7 @@
 {
   "image": "epicmod:map.png",
   "default_biome": "epicmod:weird",
-  "default_terrain": "epicmod:flat",
+  "default_terrain": "epicmod:weird",
   "entries": [
     {
       "color": 16711680,

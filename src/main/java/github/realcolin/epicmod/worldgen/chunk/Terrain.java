@@ -6,7 +6,7 @@ import github.realcolin.epicmod.EpicRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.RegistryFileCodec;
 
-public class Terrain {
+public record Terrain(float erosion, float continents, float ridges) {
 
     // TODO implement this
 
@@ -18,14 +18,4 @@ public class Terrain {
                     ).apply(yes, Terrain::new));
 
     public static final Codec<Holder<Terrain>> CODEC = RegistryFileCodec.create(EpicRegistries.TERRAIN, DIRECT_CODEC);
-
-    private final float erosion;
-    private final float continents;
-    private final float ridges;
-
-    public Terrain(float erosion, float continents, float ridges) {
-        this.erosion = erosion;
-        this.continents = continents;
-        this.ridges = ridges;
-    }
 }

@@ -86,6 +86,22 @@ public class MapImage {
         return this.defaultBiome;
     }
 
+    public Terrain getTerrain(int block_x, int block_z) {
+        int cx = block_x / 16;
+        int cz = block_z / 16;
+
+        int color = this.getColorAtPixel(cx, cz);
+
+        if (color != -1) {
+            for (MapEntry entry : entries) {
+                if (entry.color() == color)
+                    return entry.terrain().get();
+            }
+        }
+
+        return this.defaultTerrain.get();
+    }
+
 
     private int getColorAtPixel(int x, int y) {
         int width = image.getWidth();
