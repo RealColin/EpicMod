@@ -1,11 +1,9 @@
 package github.realcolin.epicmod.worldgen.map;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.EpicRegistries;
-import github.realcolin.epicmod.worldgen.biome.EpicBiomeSource;
-import github.realcolin.epicmod.worldgen.chunk.Terrain;
+import github.realcolin.epicmod.worldgen.terrain.Terrain;
 import github.realcolin.epicmod.worldgen.noise.Perlin;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.RegistryFileCodec;
@@ -36,7 +34,6 @@ public class MapImage {
     private final Holder<Terrain> defaultTerrain;
     private final List<MapEntry> entries;
     private final BufferedImage image;
-    private EpicBiomeSource source = null;
 
     private final Perlin biome_jitter = new Perlin(0);
 
@@ -56,14 +53,6 @@ public class MapImage {
             throw new RuntimeException(e);
         }
 
-    }
-
-    public EpicBiomeSource getSource() {
-        if (source == null) {
-            source = new EpicBiomeSource(Holder.direct(this));
-        }
-
-        return source;
     }
 
     public List<MapEntry> getEntries() {

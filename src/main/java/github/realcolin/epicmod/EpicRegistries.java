@@ -1,6 +1,6 @@
 package github.realcolin.epicmod;
 
-import github.realcolin.epicmod.worldgen.chunk.Terrain;
+import github.realcolin.epicmod.worldgen.terrain.Terrain;
 import github.realcolin.epicmod.worldgen.map.MapImage;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;

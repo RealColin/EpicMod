@@ -1,4 +1,4 @@
-package github.realcolin.epicmod.worldgen.chunk;
+package github.realcolin.epicmod.worldgen.terrain;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

@@ -1,13 +1,13 @@
 package github.realcolin.epicmod.worldgen.densityfunction;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import github.realcolin.epicmod.worldgen.chunk.Terrain;
+import github.realcolin.epicmod.worldgen.terrain.Terrain;
 import github.realcolin.epicmod.worldgen.map.MapImage;
 import net.minecraft.core.Holder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import org.jetbrains.annotations.NotNull;
 
 public record ImageSampler(Holder<MapImage> map, TerrainField field) implements DensityFunction.SimpleFunction {
     public static final MapCodec<ImageSampler> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -33,7 +33,7 @@ public record ImageSampler(Holder<MapImage> map, TerrainField field) implements 
     }
 
     @Override
-    public KeyDispatchDataCodec<ImageSampler> codec() {
+    public @NotNull KeyDispatchDataCodec<ImageSampler> codec() {
         return new KeyDispatchDataCodec<>(CODEC);
     }
 }

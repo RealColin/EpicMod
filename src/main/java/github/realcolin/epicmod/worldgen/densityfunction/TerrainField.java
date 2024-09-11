@@ -1,8 +1,9 @@
 package github.realcolin.epicmod.worldgen.densityfunction;
 
 import com.mojang.serialization.Codec;
-import github.realcolin.epicmod.worldgen.chunk.Terrain;
+import github.realcolin.epicmod.worldgen.terrain.Terrain;
 import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
 
 public enum TerrainField implements StringRepresentable {
     CONTINENTS("continents") {
@@ -31,14 +32,14 @@ public enum TerrainField implements StringRepresentable {
     };
 
     public static final Codec<TerrainField> CODEC = StringRepresentable.fromEnum(TerrainField::values);
-    private String name;
+    private final String name;
 
-    private TerrainField(String name) {
+    TerrainField(String name) {
         this.name = name;
     }
 
     @Override
-    public String getSerializedName() {
+    public @NotNull String getSerializedName() {
         return this.name;
     }
 

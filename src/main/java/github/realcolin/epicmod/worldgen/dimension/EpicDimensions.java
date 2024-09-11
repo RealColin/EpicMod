@@ -10,8 +10,4 @@ public class EpicDimensions {
 
     public static final ResourceKey<Level> EPICDIM_KEY = ResourceKey.create(Registries.DIMENSION,
             new ResourceLocation(EpicMod.MOD_ID, "realdim"));
-
-//    public static final ResourceKey<DimensionType> EPICDIM_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE,
-//            new ResourceLocation(EpicMod.MOD_ID, "epicdim_type"));
-
 }

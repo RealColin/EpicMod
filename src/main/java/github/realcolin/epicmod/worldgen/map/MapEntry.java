@@ -2,7 +2,7 @@ package github.realcolin.epicmod.worldgen.map;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import github.realcolin.epicmod.worldgen.chunk.Terrain;
+import github.realcolin.epicmod.worldgen.terrain.Terrain;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
 
