@@ -18,6 +18,12 @@ public enum TerrainField implements StringRepresentable {
             return terrain.erosion();
         }
     },
+    HEIGHT("height") {
+        @Override
+        public float read(Terrain terrain) {
+            return 0;
+        }
+    },
     RIDGES("ridges") {
         @Override
         public float read(Terrain terrain) {
