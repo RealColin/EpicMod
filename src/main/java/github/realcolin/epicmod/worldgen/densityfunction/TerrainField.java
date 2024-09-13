@@ -21,7 +21,7 @@ public enum TerrainField implements StringRepresentable {
     HEIGHT("height") {
         @Override
         public float read(Terrain terrain) {
-            return 0;
+            return terrain.height();
         }
     },
     RIDGES("ridges") {

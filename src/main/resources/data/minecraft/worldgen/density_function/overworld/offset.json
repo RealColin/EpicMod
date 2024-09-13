@@ -1,1 +1,5 @@
--0.52
+{
+  "type": "epicmod:image_sampler",
+  "map": "epicmod:epic",
+  "field": "height"
+}
