@@ -12,7 +12,6 @@ public class DensityFunctions {
 
     public static void register(IEventBus bus) {
         DENSITY_FUNCTIONS.register("image_sampler", () -> ImageSampler.CODEC);
-        DENSITY_FUNCTIONS.register("clamp", () -> Clamp.CODEC);
 
         DENSITY_FUNCTIONS.register(bus);
     }
