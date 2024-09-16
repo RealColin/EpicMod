@@ -68,9 +68,9 @@ public class Perlin {
     public double sample(double x, double y) {
         double sum = 0.0f;
         double amp = 1.0f;
-        double freq = 1.0f;
+        double freq = 2.0f;
         double lanc = 2.0f;
-        double persistance = 0.5f;
+        double persistance = 0.125f;
 
         for (int i = 0; i < 4; i++) {
             sum += amp * noise(x * freq, y * freq);

@@ -37,6 +37,9 @@ public class MapImage {
 
     private final Perlin biome_jitter = new Perlin(0);
 
+    private final Perlin x_jitter = new Perlin(3);
+    private final Perlin z_jitter = new Perlin(4);
+
     // TODO remove temp print statements
     public MapImage(ResourceLocation res, Holder<Biome> defaultBiome, Holder<Terrain> defaultTerrain, List<MapEntry> entries) {
         this.res = res;
@@ -76,8 +79,11 @@ public class MapImage {
     }
 
     public Terrain getTerrain(int block_x, int block_z) {
-        int cx = block_x / 16;
-        int cz = block_z / 16;
+        double ox = x_jitter.sample(block_x * 0.05, block_z * 0.05) * 8;
+        double oz = z_jitter.sample(block_x * 0.05, block_z * 0.05) * 8;
+
+        int cx = (int) ((block_x + ox) / 16.0);
+        int cz = (int) ((block_z + oz) / 16.0);
 
         int color = this.getColorAtPixel(cx, cz);
 
