@@ -72,7 +72,7 @@ public class Perlin {
         double lanc = 2.0f;
         double persistance = 0.125f;
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 8; i++) {
             sum += amp * noise(x * freq, y * freq);
             amp *= persistance;
             freq *= lanc;

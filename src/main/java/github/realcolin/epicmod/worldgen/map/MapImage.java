@@ -79,8 +79,8 @@ public class MapImage {
     }
 
     public Terrain getTerrain(int block_x, int block_z) {
-        double ox = x_jitter.sample(block_x * 0.05, block_z * 0.05) * 8;
-        double oz = z_jitter.sample(block_x * 0.05, block_z * 0.05) * 8;
+        double ox = x_jitter.sample((block_x + 0.01) * 0.05, (block_z + 0.01) * 0.05) * 12.0;
+        double oz = z_jitter.sample((block_x + 0.01) * 0.05, (block_z + 0.01) * 0.05) * 12.0;
 
         int cx = (int) ((block_x + ox) / 16.0);
         int cz = (int) ((block_z + oz) / 16.0);
