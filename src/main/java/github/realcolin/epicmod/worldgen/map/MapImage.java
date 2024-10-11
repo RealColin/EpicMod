@@ -35,12 +35,12 @@ public class MapImage {
     private final List<MapEntry> entries;
     private final BufferedImage image;
 
+    private final int scaleFactor = 16;
+
     private final Perlin biome_jitter = new Perlin(0);
 
-    private final Perlin x_jitter = new Perlin(3);
-    private final Perlin z_jitter = new Perlin(4);
+    private final Perlin jitterNoise = new Perlin(3);
 
-    // TODO remove temp print statements
     public MapImage(ResourceLocation res, Holder<Biome> defaultBiome, Holder<Terrain> defaultTerrain, List<MapEntry> entries) {
         this.res = res;
         this.defaultBiome = defaultBiome;
@@ -79,13 +79,75 @@ public class MapImage {
     }
 
     public Terrain getTerrain(int block_x, int block_z) {
-        double ox = x_jitter.sample((block_x + 0.01) * 0.05, (block_z + 0.01) * 0.05) * 12.0;
-        double oz = z_jitter.sample((block_x + 0.01) * 0.05, (block_z + 0.01) * 0.05) * 12.0;
+        double jitter = jitterNoise.sample((block_x + 0.01) * 0.05, (block_z + 0.01) * 0.05) * 4.0;
 
-        int cx = (int) ((block_x + ox) / 16.0);
-        int cz = (int) ((block_z + oz) / 16.0);
+        int cx = (int) ((block_x + jitter) / scaleFactor);
+        int cz = (int) ((block_z + jitter) / scaleFactor);
+        int ix = (int)(block_x + jitter) % scaleFactor;
+        int iz = (int)(block_z + jitter) % scaleFactor;
 
-        int color = this.getColorAtPixel(cx, cz);
+        int base = this.getColorAtPixel(cx, cz);
+        int left = this.getColorAtPixel(cx - 1, cz);
+        int right = this.getColorAtPixel(cx + 1, cz);
+        int up = this.getColorAtPixel(cx, cz - 1);
+        int down = this.getColorAtPixel(cx, cz + 1);
+
+        int half = scaleFactor / 2;
+        int color = base;
+
+        if (ix < half && left != base) {
+            if (iz < half && up != base) {
+                if (ix + iz < half) {
+                    if (left == up) {
+                        color = left;
+                    } else {
+                        int corner = this.getColorAtPixel(cx - 1, cz - 1);
+
+                        if (corner == left || corner == up) {
+                            color = corner;
+                        }
+                    }
+                }
+            } else if (iz > half && down != base) {
+                if (ix + iz > half + (ix * 2)) {
+                    if (left == down) {
+                        color = left;
+                    } else {
+                        int corner = this.getColorAtPixel(cx - 1, cz + 1);
+
+                        if (corner == left || corner == down) {
+                            color = corner;
+                        }
+                    }
+                }
+            }
+        } else if (ix >= half && right != base) {
+            if (iz < half && up != base) {
+                if (ix + iz >= half + (iz * 2)) {
+                    if (right == up) {
+                        color = right;
+                    } else {
+                        int corner = this.getColorAtPixel(cx + 1, cz - 1);
+
+                        if (corner == right || corner == up) {
+                            color = corner;
+                        }
+                    }
+                }
+            } else if (iz > half && down != base) {
+                if (ix + iz >= half * 3) {
+                    if (right == down) {
+                        color = right;
+                    } else {
+                        int corner = this.getColorAtPixel(cx + 1, cz + 1);
+
+                        if (corner == right || corner == down) {
+                            color = corner;
+                        }
+                    }
+                }
+            }
+        }
 
         if (color != -1) {
             for (MapEntry entry : entries) {
