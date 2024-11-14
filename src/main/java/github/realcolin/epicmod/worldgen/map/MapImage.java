@@ -1,5 +1,6 @@
 package github.realcolin.epicmod.worldgen.map;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import github.realcolin.epicmod.EpicRegistries;
@@ -9,18 +10,29 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
+import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
+import org.apache.batik.bridge.BridgeContext;
+import org.apache.batik.bridge.GVTBuilder;
+import org.apache.batik.bridge.UserAgentAdapter;
+import org.apache.batik.gvt.GraphicsNode;
+import org.apache.batik.util.XMLResourceDescriptor;
+import org.w3c.dom.svg.SVGDocument;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MapImage {
     public static final Codec<MapImage> DIRECT_CODEC =
             RecordCodecBuilder.create(instance -> instance.group(
                     ResourceLocation.CODEC.fieldOf("image").forGetter(src -> src.res),
+                    Codec.INT.fieldOf("ppi").forGetter(src -> src.ppi),
                     Biome.CODEC.fieldOf("default_biome").forGetter(src -> src.defaultBiome),
                     Terrain.CODEC.fieldOf("default_terrain").forGetter(src -> src.defaultTerrain),
                     MapEntry.ENTRY_CODEC.fieldOf("entries").forGetter(src -> src.entries)
@@ -28,34 +40,45 @@ public class MapImage {
 
     public static final Codec<Holder<MapImage>> CODEC = RegistryFileCodec.create(EpicRegistries.MAP, DIRECT_CODEC);
 
-
+    private final int ppi;
     private final ResourceLocation res;
     private final Holder<Biome> defaultBiome;
     private final Holder<Terrain> defaultTerrain;
     private final List<MapEntry> entries;
-    private final BufferedImage image;
+    private final GraphicsNode node;
+    private final int width;
+    private final int height;
 
-    private final int scaleFactor = 16;
+    private ConcurrentHashMap<Pair<Integer, Integer>, BufferedImage> cache;
+    private final int whatever = 16;
 
-    private final Perlin biome_jitter = new Perlin(0);
-
-    private final Perlin jitterNoise = new Perlin(3);
-
-    public MapImage(ResourceLocation res, Holder<Biome> defaultBiome, Holder<Terrain> defaultTerrain, List<MapEntry> entries) {
+    public MapImage(ResourceLocation res, int ppi, Holder<Biome> defaultBiome, Holder<Terrain> defaultTerrain, List<MapEntry> entries) {
         this.res = res;
+        this.ppi = ppi;
         this.defaultBiome = defaultBiome;
         this.defaultTerrain = defaultTerrain;
         this.entries = entries;
+        this.cache = new ConcurrentHashMap<>();
 
         String PATH = "assets/%s/map/%s".formatted(res.getNamespace(), res.getPath());
+        System.out.println(PATH);
 
-        URL resource = getClass().getClassLoader().getResource(PATH);
         try {
-            image = ImageIO.read(Objects.requireNonNull(resource));
-        } catch (IOException e) {
+            String parser = XMLResourceDescriptor.getXMLParserClassName();
+            SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(parser);
+            InputStream svgFile = MapImage.class.getResourceAsStream("/" + PATH);
+            SVGDocument svgDocument = factory.createSVGDocument(null, svgFile);
+
+            GVTBuilder builder = new GVTBuilder();
+            BridgeContext ctx = new BridgeContext(new UserAgentAdapter());
+            node = builder.build(ctx, svgDocument);
+
+            this.width = Math.round((svgDocument.getRootElement().getWidth().getBaseVal().getValue() / 96) * ppi);
+            this.height = Math.round((svgDocument.getRootElement().getHeight().getBaseVal().getValue() / 96) * ppi);
+
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public List<MapEntry> getEntries() {
@@ -64,10 +87,9 @@ public class MapImage {
 
     public Holder<Biome> getBiome(int x, int z) {
         int scale = 4; // TODO make this not hardcoded
-        double jitter = biome_jitter.sample((x + 0.5) / 2, (z + 0.5) / 2);
-        int rounded = (int)Math.round(jitter * scale);
 
-        int color = this.getColorAtPixel((x + rounded) / scale, (z + rounded) / scale);
+
+        int color = this.getColorAtPixel((x) / scale, (z) / scale);
 
         if (color != -1) {
             for (MapEntry entry : entries) {
@@ -79,80 +101,14 @@ public class MapImage {
     }
 
     public Terrain getTerrain(int block_x, int block_z) {
-        double jitter = jitterNoise.sample((block_x + 0.01) * 0.05, (block_z + 0.01) * 0.05) * 4.0;
+        int color = getColorAtPixel(block_x, block_z);
 
-        int cx = (int) ((block_x + jitter) / scaleFactor);
-        int cz = (int) ((block_z + jitter) / scaleFactor);
-        int ix = (int)(block_x + jitter) % scaleFactor;
-        int iz = (int)(block_z + jitter) % scaleFactor;
-
-        int base = this.getColorAtPixel(cx, cz);
-        int left = this.getColorAtPixel(cx - 1, cz);
-        int right = this.getColorAtPixel(cx + 1, cz);
-        int up = this.getColorAtPixel(cx, cz - 1);
-        int down = this.getColorAtPixel(cx, cz + 1);
-
-        int half = scaleFactor / 2;
-        int color = base;
-
-        if (ix < half && left != base) {
-            if (iz < half && up != base) {
-                if (ix + iz < half) {
-                    if (left == up) {
-                        color = left;
-                    } else {
-                        int corner = this.getColorAtPixel(cx - 1, cz - 1);
-
-                        if (corner == left || corner == up) {
-                            color = corner;
-                        }
-                    }
-                }
-            } else if (iz > half && down != base) {
-                if (ix + iz > half + (ix * 2)) {
-                    if (left == down) {
-                        color = left;
-                    } else {
-                        int corner = this.getColorAtPixel(cx - 1, cz + 1);
-
-                        if (corner == left || corner == down) {
-                            color = corner;
-                        }
-                    }
-                }
-            }
-        } else if (ix >= half && right != base) {
-            if (iz < half && up != base) {
-                if (ix + iz >= half + (iz * 2)) {
-                    if (right == up) {
-                        color = right;
-                    } else {
-                        int corner = this.getColorAtPixel(cx + 1, cz - 1);
-
-                        if (corner == right || corner == up) {
-                            color = corner;
-                        }
-                    }
-                }
-            } else if (iz > half && down != base) {
-                if (ix + iz >= half * 3) {
-                    if (right == down) {
-                        color = right;
-                    } else {
-                        int corner = this.getColorAtPixel(cx + 1, cz + 1);
-
-                        if (corner == right || corner == down) {
-                            color = corner;
-                        }
-                    }
-                }
-            }
-        }
 
         if (color != -1) {
-            for (MapEntry entry : entries) {
-                if (entry.color() == color)
-                    return entry.terrain().get();
+            for (var a : entries) {
+                var c = new Color(a.color());
+                if (c.getRGB() == color)
+                    return a.terrain().get();
             }
         }
 
@@ -161,13 +117,33 @@ public class MapImage {
 
 
     private int getColorAtPixel(int x, int y) {
-        int width = image.getWidth();
-        int height = image.getHeight();
-
-        if (x < 0 || x >= width || y < 0 || y >= height) {
+        if (outsideRange(x, y))
             return -1;
-        } else {
-            return image.getRGB(x, y) & 0x00FFFFFF;
+
+        var fort = new Pair<>(x / whatever, y / whatever);
+        BufferedImage img;
+
+        if (cache.containsKey(fort))
+            img = cache.get(fort);
+        else {
+            img = new BufferedImage(whatever, whatever, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = img.createGraphics();
+
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+            int svgX = fort.getFirst() * whatever;
+            int svgY = fort.getSecond() * whatever;
+            g2d.translate(-svgX, -svgY);
+            g2d.scale((double) ppi / 96.0, (double)ppi / 96.0);
+            this.node.paint(g2d);
+
+            cache.put(fort, img);
         }
+
+        return img.getRGB(x % whatever, y % whatever);
+    }
+
+    private boolean outsideRange(int x, int y) {
+        return x < 0 || x >= width || y < 0 || y >= height;
     }
 }

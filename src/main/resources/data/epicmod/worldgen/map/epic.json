@@ -1,5 +1,6 @@
 {
-  "image": "epicmod:map.png",
+  "image": "epicmod:map.svg",
+  "ppi": 96,
   "default_biome": "epicmod:weird",
   "default_terrain": "epicmod:weird",
   "entries": [
@@ -9,12 +10,12 @@
       "terrain": "epicmod:steppe"
     },
     {
-      "color": 65280,
+      "color": 32768,
       "biome": "epicmod:green",
       "terrain": "epicmod:steppe"
     },
     {
-      "color": 255,
+      "color": 128,
       "biome": "epicmod:rivr",
       "terrain": "epicmod:river"
     }
